@@ -1,7 +1,7 @@
 package com.core.training.dongmin;
 
-import com.core.training.dongmin.data.User;
-import com.core.training.dongmin.observer.RegisteredUsers;
+import com.core.training.dongmin.VO.User;
+import com.core.training.dongmin.service.RegisterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -16,6 +16,8 @@ import org.springframework.validation.Validator;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 @Slf4j
@@ -37,12 +39,15 @@ public class AppRunner implements ApplicationRunner {
     @Autowired
     ApplicationEventPublisher publisher;
 
+    @Autowired
+    RegisterService registeredUsers;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         int input;
         boolean again = true;
-
-        RegisteredUsers registeredUsers = new RegisteredUsers();
+        List<String> Users = new ArrayList<>();
+        //RegisterService registeredUsers = new RegisterService();
         User user = new User();
 
         //-- 입력 장치
@@ -76,8 +81,8 @@ public class AppRunner implements ApplicationRunner {
 
                     //-- 밸리데이션 오류 체크
                     if (!userErrors.hasErrors()) {
-                        registeredUsers.attach(user.getId());
-                        if(registeredUsers.Users.size() != registeredUsers.Users.stream().distinct().count()){
+                        registeredUsers.attach(user.getId(),Users);
+                        if(Users.size() != Users.stream().distinct().count()){
                             log.error("{}",messageSource.getMessage("id.duplication", new String[]{}, Locale.KOREA));
                             again = false;
                         }
@@ -92,11 +97,25 @@ public class AppRunner implements ApplicationRunner {
                     break;
 
                 case 2:
-                    //-- 옵저버 패턴 형식의 메시지 보내기
-                    registeredUsers.messageObserver("안녕하세요~ 공지입니다");
+                    //-- 옵저버 패턴 형식의 메세지 보내기
+                    registeredUsers.messageObserver("공지 메시지 입니다",Users);
                     break;
 
                 case 3:
+                    //-- AOP 실용을 위한 메세지 보내기
+                    registeredUsers.messageObserverHello("안녕하세요~ 인사입니다",Users);
+                    break;
+                case 4:
+                    //--
+                    if(Users.size() >= 2) {
+                        registeredUsers.detach(Users.get(1), Users);
+                        log.info("{}을 구독 해지 처리하였습니다.",Users.get(1));
+                    }
+                    else {
+                        log.info("2번째로 등록한 사람이 없습니다.");
+                    }
+                    break;
+                case 5:
                     again = false;
                     break;
 

@@ -1,6 +1,6 @@
 package com.core.training.dongmin.event;
 
-import com.core.training.dongmin.data.User;
+import com.core.training.dongmin.VO.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
