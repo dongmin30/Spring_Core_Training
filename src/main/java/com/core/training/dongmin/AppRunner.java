@@ -105,11 +105,12 @@ public class AppRunner implements ApplicationRunner {
                     //-- AOP 실용을 위한 메세지 보내기
                     registeredUsers.messageObserverHello("안녕하세요~ 인사입니다",Users);
                     break;
+
                 case 4:
                     //--
                     if(Users.size() >= 2) {
-                        registeredUsers.detach(Users.get(1), Users);
                         log.info("{}을 구독 해지 처리하였습니다.",Users.get(1));
+                        registeredUsers.detach(Users.get(1), Users);
                     }
                     else {
                         log.info("2번째로 등록한 사람이 없습니다.");
